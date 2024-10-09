@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"> <!-- Defines character encoding as UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Makes the page responsive -->
+    <title>Title</title> <!-- Page title -->
+    <link rel="stylesheet" href="style.css"> <!-- Links external CSS file -->
+</head>
+<body>
+<div id="app">
+    <h1>Task Manager</h1> <!-- Main heading for the task manager -->
+    <p> <i>Get your life together</i></p> <!-- Subtitle with italics -->
+    
+    <h2>List of tasks</h2> <!-- Subheading for task list -->
+    <div id="task-list">
+        <ul id="tasks"> <!-- Unordered list to display tasks -->
+        </ul>
+    </div>
+    
+    <div id="add-task"> <!-- Section for adding a new task -->
+        <form id="taskform"> <!-- Form to input new task -->
+            <input type="text" id="taskName" placeholder="Task" required> <!-- Text input for task name -->
+            <button type="submit">Add Task</button> <!-- Button to submit the task -->
+        </form>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
