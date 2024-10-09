@@ -1,52 +1,63 @@
+// Import required modules
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+
+// Initialize an Express app
 const app = express();
+
+// Set the server port to an environment variable or 3000
 const PORT = process.env.PORT || 3000;
 
+// Define the path to the task.json file for reading and writing tasks
 const DATA_FILE = path.join(__dirname, 'task.json');
 
+// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Parse incoming JSON request bodies
 app.use(express.json());
 
-
-//Læser tasks fra fil
+// Function to read tasks from the file, returns tasks as an array
 const readTasksFromFile = () => {
-  if(fs.existsSync(DATA_FILE)){
-      const data = fs.readFileSync(DATA_FILE, 'utf8');
-      return JSON.parse(data);
-  } else{
-      return [];
-  }
+    if (fs.existsSync(DATA_FILE)) { // Check if the file exists
+        const data = fs.readFileSync(DATA_FILE, 'utf8'); // Read file contents
+        return JSON.parse(data); // Parse and return JSON data
+    } else {
+        return []; // Return empty array if file does not exist
+    }
 };
 
-
-// Laver tasks fra json til string
+// Function to write tasks to the task.json file
 const writeTaskToFile = (tasks) => {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2));
+    try {
+        fs.writeFileSync(DATA_FILE, JSON.stringify(tasks, null, 2)); // Write tasks as formatted JSON to file
+    } catch (err) {
+        console.error('Error writing to the file:', err);
+    }
 };
 
 
-// viser html filen
+// Route for serving the index.html file
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'))
+    res.sendFile(path.join(__dirname, 'public', 'index.html')); // Send the HTML file to the client
 });
 
-
-// Endpoint for at tilføje en ny task til filen
+// Endpoint to handle adding a new task to the file
 app.post('/api/tasks', (req, res) => {
-   const newTask = req.body.taskname;
+    const newTask = req.body.taskName; // Extract the task name from the request body
 
-   if(newTask){
-       const tasks = readTasksFromFile();
-       tasks.push(newTask);
-       writeTaskToFile(tasks);
-       res.status(201).json({message: 'Task tilføjet', tasks});
-   } else{
-       res.status(400).json({message: 'ingen task fundet'});
-   }
+    if (newTask) { // If task is not empty
+        const tasks = readTasksFromFile(); // Read existing tasks from file
+        tasks.push(newTask); // Add the new task to the array
+        writeTaskToFile(tasks); // Write the updated task list back to the file
+        res.status(201).json({ message: 'Task tilføjet', tasks }); // Respond with success and the updated task list
+    } else {
+        res.status(400).json({ message: 'ingen task fundet' }); // Respond with an error if task is missing
+    }
 });
 
+// Start the server and listen on the specified port
 app.listen(PORT, () => {
-   console.log(`Server running on http://localhost:${PORT}/`);
+    console.log(`Server running on http://localhost:${PORT}/`); // Log that the server is running
 });
