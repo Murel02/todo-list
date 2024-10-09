@@ -43,6 +43,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html')); // Send the HTML file to the client
 });
 
+app.get('/api/tasks', (req, res) => {
+    const tasks = readTasksFromFile();
+    res.status(200).json(tasks);
+});
+
 // Endpoint to handle adding a new task to the file
 app.post('/api/tasks', (req, res) => {
     const newTask = req.body.taskName; // Extract the task name from the request body
@@ -55,6 +60,19 @@ app.post('/api/tasks', (req, res) => {
     } else {
         res.status(400).json({ message: 'ingen task fundet' }); // Respond with an error if task is missing
     }
+});
+
+app.delete('/api/tasks/:index', (req,res) => {
+   const taskIndex = parseInt(req.params.index, 10);
+   const tasks = readTasksFromFile();
+
+   if(taskIndex >= 0 && taskIndex < tasks.length){
+       tasks.splice(taskIndex, 1);
+       writeTaskToFile(tasks);
+       res.status(200).json({message: 'Task deleted', tasks});
+   } else{
+       res.status(404).json({message: 'Task not found'});
+   }
 });
 
 // Start the server and listen on the specified port
