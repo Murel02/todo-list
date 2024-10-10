@@ -50,9 +50,12 @@ app.get('/api/tasks', (req, res) => {
 
 // Endpoint to handle adding a new task to the file
 app.post('/api/tasks', (req, res) => {
-    const newTask = req.body.taskName; // Extract the task name from the request body
+    const newTask = {
+        name: req.body.taskName,  // Extract the task name from the request body
+        completed: false
+    };
 
-    if (newTask) { // If task is not empty
+    if (newTask.name) { // If task is not empty
         const tasks = readTasksFromFile(); // Read existing tasks from file
         tasks.push(newTask); // Add the new task to the array
         writeTaskToFile(tasks); // Write the updated task list back to the file
@@ -70,6 +73,19 @@ app.delete('/api/tasks/:index', (req,res) => {
        tasks.splice(taskIndex, 1);
        writeTaskToFile(tasks);
        res.status(200).json({message: 'Task deleted', tasks});
+   } else{
+       res.status(404).json({message: 'Task not found'});
+   }
+});
+
+app.put('/api/tasks/:index', (req, res) => {
+   const taskIndex = parseInt(req.params.index, 10);
+   const tasks = readTasksFromFile();
+
+   if(taskIndex >= 0 && taskIndex < tasks.length){
+       tasks[taskIndex].completed = req.body.completed;
+       writeTaskToFile(tasks);
+       res.status(200).json({message: 'Task status updated', tasks});
    } else{
        res.status(404).json({message: 'Task not found'});
    }

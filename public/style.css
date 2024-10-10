@@ -65,6 +65,12 @@ button:hover {
     border-radius: 5px; /* Rounded corners */
 }
 
+/* Align task name with the checkbox */
+#tasks li span {
+    flex: 1; /* Allow task name to take up remaining space */
+    margin-left: 10px; /* Space between checkbox and task name */
+}
+
 /* Styling for buttons inside task items */
 #tasks li button {
     background-color: #e74c3c; /* Red background for delete button */
